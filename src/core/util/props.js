@@ -27,25 +27,23 @@ export function validateProp (
   const prop = propOptions[key]
   const absent = !hasOwn(propsData, key)
   let value = propsData[key]
-  // boolean casting
+  // 布尔型转换
   const booleanIndex = getTypeIndex(Boolean, prop.type)
   if (booleanIndex > -1) {
     if (absent && !hasOwn(prop, 'default')) {
       value = false
     } else if (value === '' || value === hyphenate(key)) {
-      // only cast empty string / same name to boolean if
-      // boolean has higher priority
+      // 如果布尔值具有更高的优先级，则仅将空字符串或相同的名称转换为布尔值
       const stringIndex = getTypeIndex(String, prop.type)
       if (stringIndex < 0 || booleanIndex < stringIndex) {
         value = true
       }
     }
   }
-  // check default value
+  // 检测默认值
   if (value === undefined) {
     value = getPropDefaultValue(vm, prop, key)
-    // since the default value is a fresh copy,
-    // make sure to observe it.
+    // 由于默认值为全新副本，因此请务必观察它
     const prevShouldObserve = shouldObserve
     toggleObserving(true)
     observe(value)
@@ -53,7 +51,7 @@ export function validateProp (
   }
   if (
     process.env.NODE_ENV !== 'production' &&
-    // skip validation for weex recycle-list child component props
+    // 跳过weex回收清单子组件prop传值的验证
     !(__WEEX__ && isObject(value) && ('@binding' in value))
   ) {
     assertProp(prop, key, value, vm, absent)
@@ -62,15 +60,15 @@ export function validateProp (
 }
 
 /**
- * Get the default value of a prop.
+ * 获取prop的默认值
  */
 function getPropDefaultValue (vm: ?Component, prop: PropOptions, key: string): any {
-  // no default, return undefined
+  // 没有默认值，返回undefined
   if (!hasOwn(prop, 'default')) {
     return undefined
   }
   const def = prop.default
-  // warn against non-factory defaults for Object & Array
+  // 警告对象和数组的非出厂默认值
   if (process.env.NODE_ENV !== 'production' && isObject(def)) {
     warn(
       'Invalid default value for prop "' + key + '": ' +
@@ -79,14 +77,15 @@ function getPropDefaultValue (vm: ?Component, prop: PropOptions, key: string): a
       vm
     )
   }
-  // the raw prop value was also undefined from previous render,
-  // return previous default value to avoid unnecessary watcher trigger
+  // 原始prop值也未从先前的渲染中定义，请返回先前的默认值，以避免不必要的观察者触发
   if (vm && vm.$options.propsData &&
     vm.$options.propsData[key] === undefined &&
     vm._props[key] !== undefined
   ) {
     return vm._props[key]
   }
+  // 调用非函数类型的工厂函数
+  // 如果一个值的原型是函数，那么在不同的执行上下文它的值都是Function
   // call factory function for non-Function types
   // a value is Function if its prototype is function even across different execution context
   return typeof def === 'function' && getType(prop.type) !== 'Function'
@@ -95,7 +94,7 @@ function getPropDefaultValue (vm: ?Component, prop: PropOptions, key: string): a
 }
 
 /**
- * Assert whether a prop is valid.
+ * 断言道具是否有效
  */
 function assertProp (
   prop: PropOptions,
@@ -157,7 +156,7 @@ function assertType (value: any, type: Function): {
   if (simpleCheckRE.test(expectedType)) {
     const t = typeof value
     valid = t === expectedType.toLowerCase()
-    // for primitive wrapper objects
+    // 用于原始包装对象
     if (!valid && t === 'object') {
       valid = value instanceof type
     }
@@ -175,9 +174,7 @@ function assertType (value: any, type: Function): {
 }
 
 /**
- * Use function string name to check built-in types,
- * because a simple equality check will fail when running
- * across different vms / iframes.
+ * 使用功能字符串名称来检查内置类型，因为在不同的vms / iframe上运行时，简单的相等性检查将失败。
  */
 function getType (fn) {
   const match = fn && fn.toString().match(/^\s*function (\w+)/)
@@ -207,7 +204,7 @@ function getInvalidTypeMessage (name, value, expectedTypes) {
   const receivedType = toRawType(value)
   const expectedValue = styleValue(value, expectedType)
   const receivedValue = styleValue(value, receivedType)
-  // check if we need to specify expected value
+  // 检查是否需要指定期望值
   if (expectedTypes.length === 1 &&
       isExplicable(expectedType) &&
       !isBoolean(expectedType, receivedType)) {

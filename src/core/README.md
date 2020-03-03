@@ -59,11 +59,36 @@ if (vm.$options.el) {
 
 ### 1.1.2 lifecycle（/src/core/instance/lifecycle.js）
 
-
+//
 
 ## 1.2 component
+
+组件
 
 展开component目录，发现下面只有一个keep-alive。而keep-alive作用时候使组件不被销毁
 
 keep-alive:
 
+## 1.3 observer
+
+观察者模式
+
+## 1.4 util
+
+工具库
+
+### 1.4.1 error.js
+
+错误获取相关
+
+### 1.4.2 lang.js
+
+语言相关
+
+## 1.5 global-api
+
+全局api
+
+## 1.6 vdom
+
+虚拟DOM
